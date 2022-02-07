@@ -1,7 +1,7 @@
 from ast import Raise
 import json
 
-data = json.load(open("test.json", "r"))
+data = json.load(open(input("Input the name of the JSON file you want to load:\n"), "r"))
 
 acceptedKeywords = {
     "body": [
