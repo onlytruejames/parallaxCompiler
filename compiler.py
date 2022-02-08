@@ -1,4 +1,3 @@
-from ast import Raise
 import json
 
 data = json.load(open(input("Input the name of the JSON file you want to load:\n"), "r"))
@@ -11,7 +10,7 @@ acceptedKeywords = {
     ],
     "parallax": [
         {"url": "str"},
-        {"title": "str"}
+        {"heading": "str"}
     ],
     "content": [
         {"title": "str"},
@@ -19,15 +18,15 @@ acceptedKeywords = {
         {"list": "list"},
         {"img": "list"}
     ],
-    "list": [
-        {"ordered": "bool"},
-        {"content": "list"}
-    ],
-    "img": [
-        {"url": "str"},
-        {"width": "int"},
-        {"height": "int"}
-    ],
+    "list": {
+        "ordered": "bool",
+        "content": "list"
+    },
+    "img": {
+        "url": "str",
+        "width": "int",
+        "height": "int"
+    },
     "special": [
         "scrollpoint",
         "line"
@@ -69,8 +68,8 @@ def parseParallax(line):
     line = line["parallax"]
     html = ""
     if line["url"]:
-        if line["title"]:
-            html = f'<div class="parallax" style="background-image: url({line["url"]});"><h1>{line["title"]}</h1></div>'
+        if line["heading"]:
+            html = f'<div class="parallax" style="background-image: url({line["url"]});"><h1>{line["heading"]}</h1></div>'
         else:
             html =  f'<div class="parallax" style="background-image: url({line["url"]});"></div>'
         return {
