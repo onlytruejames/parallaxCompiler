@@ -1,6 +1,10 @@
+from cgi import parse_header
 import json
 
 data = json.load(open(input("Input the name of the JSON file you want to load:\n"), "r"))
+
+global totalScrollpoints
+totalScrollpoints = 0
 
 acceptedKeywords = {
     "body": [
@@ -29,14 +33,12 @@ acceptedKeywords = {
     },
     "special": [
         "scrollpoint",
-        "line"
+        "hr"
     ]
 }
 
 head = ""
 body = ""
-
-totalScrollpoints = 0
 
 def getKeys(keyList):
     returnList = []
@@ -60,9 +62,6 @@ def getType(line, callPoint):
             }
     print(f"There's an illegal string type on the line that looks like\n{line}")
     return False
-
-def parseScrollpoint():
-    return f"""<div id="scroll{totalScrollpoints}"></div>"""
 
 def parseParallax(line):
     line = line["parallax"]
@@ -90,12 +89,12 @@ def parseContent(line):
     del line
     for line in lines:
         typeOf = getType(line, "content")
-        if typeOf["special"] == False:
-            html += f"""{parseTypes[typeOf["key"]](line)}
-            """
-        elif typeOf["special"]:
-            html += f"""{parseTypes[line]()}
-            """
+        if typeOf:
+            if typeOf["special"]:
+                html += parseSpecials(line)
+            else:
+                html += f"""{parseTypes[typeOf["key"]](line)}
+                """
     return {
         "place": "body",
         "content": html
@@ -139,8 +138,20 @@ def parseImg(line):
         height = ""
     return f"""<img src="{line["img"]["url"]}"{width}{height}>"""
 
-def parseBreakLine():
+def parseSpecials(line):
+    if line in acceptedKeywords["special"]:
+        return parseTypes[line]()
+    else:
+        return ""
+
+def parseHR():
     return "<hr>"
+
+def parseScrollpoint():
+    global totalScrollpoints
+    html = f"""<div id="scroll{totalScrollpoints}"></div>"""
+    totalScrollpoints += 1
+    return html
 
 parseTypes = {
     "parallax": parseParallax,
@@ -149,9 +160,10 @@ parseTypes = {
     "title": parseTitle,
     "text": parseText,
     "list": parseList,
-    "scrollpoint": parseScrollpoint,
     "img": parseImg,
-    "breakLine": parseBreakLine
+    "specials": parseSpecials,
+    "hr": parseHR,
+    "scrollpoint": parseScrollpoint
 }
 
 lineNum = 0
@@ -160,9 +172,7 @@ for line in data:
     lineData = getType(line, "body")
     if lineData:
         if lineData["special"]:
-            if line == "scrollpoint":
-                body += f"{parseScrollpoint()}\n"
-                totalScrollpoints += 1
+            body += f"{parseSpecials(line)}\n"
         else:
             HTMLine = parseTypes[lineData["key"]](line)
             if HTMLine:
@@ -172,11 +182,17 @@ for line in data:
                     body += f"{HTMLine['content']}\n"
     lineNum += 1
 
+if totalScrollpoints > 0:
+    script = "<script>" + open("controller.js", "r").read().replace("maxStage", str(totalScrollpoints)) + "</script>"
+else:
+    script = ""
+
 html = f"""<html><head>
 {head}
 <style>
 {open("style.css", "r").read()}
 </style>
+{script}
 </head>
 <body>
 {body}
