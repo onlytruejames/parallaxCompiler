@@ -2,7 +2,7 @@
 
 A way to make cool presentations with JSON
 
-A couple of years ago, I saw a [news story](https://www.bbc.co.uk/news/resources/idt-sh/who_stole_burmas_royal_ruby) on the BBC. One of their long reads. You scrolled down and cool things happened in the background. A few months later, I made one myself for school, and I've made a few more since then. I wrote this compiler so I could make them quicker, and I'm happy with the result. It needs improving, but it works.
+A couple of years ago, I saw a [news story](https://www.bbc.co.uk/news/resources/idt-sh/who_stole_burmas_royal_ruby) on the BBC. One of their long reads. You scrolled down and cool things happened in the background. A few months later, I made one myself for school, and I've made a few more since then. I wrote this compiler so I could make them quicker, and I'm happy with the result. It needs improving, but it works. It also allows scrolling by button pressing (n for next and p for previous, support *will* be added for customisation soon).
 
 # Docs
 
@@ -114,3 +114,21 @@ content is where your content goes. It accepts a list of tags. These are:
 ### heading
 
 `heading` defines the heading of the transition. It corresponds to `<h1>`. It is not mandatory.
+
+## Special tags
+
+Special tags are made up of strings and can be used in nearly every context. There are currently 2 special tags: `scrollpoint` and `hr`. This is how you use them:
+
+```json
+[
+  "special"
+]
+```
+
+### scrollpoint
+
+`scrollpoint` tells the button-activated scrolling that it can scroll to this point in the page.
+
+### hr
+
+`hr` adds a horizontal line to the page. It corresponds to `<hr>.
