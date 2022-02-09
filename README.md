@@ -79,8 +79,8 @@ content is where your content goes. It accepts a list of tags. These are:
 ```json
 {
   "url": "",
-  width: "int",
-  height: "int"
+  "width": "int",
+  "height": "int"
 }
 ```
 
