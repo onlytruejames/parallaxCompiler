@@ -131,4 +131,4 @@ Special tags are made up of strings and can be used in nearly every context. The
 
 ### hr
 
-`hr` adds a horizontal line to the page. It corresponds to `<hr>.
+`hr` adds a horizontal line to the page. It corresponds to `<hr>`.
