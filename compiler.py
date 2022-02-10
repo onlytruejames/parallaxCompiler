@@ -1,11 +1,6 @@
 from cgi import parse_header
 import json
 
-data = json.load(open(input("Input the name of the JSON file you want to load:\n"), "r"))
-
-global totalScrollpoints
-totalScrollpoints = 0
-
 acceptedKeywords = {
     "body": [
         {"pageTitle": "str"},
@@ -34,11 +29,12 @@ acceptedKeywords = {
     "special": [
         "scrollpoint",
         "hr"
+    ],
+    "link": [
+        "img",
+        "text"
     ]
 }
-
-head = ""
-body = ""
 
 def getKeys(keyList):
     returnList = []
@@ -106,6 +102,18 @@ def parseTitle(line):
 def parseText(line):
     return f"""<p>{line["text"]}</p>"""
 
+def parseLink(line):
+    newTab = ""
+    if line["newTab"]:
+        newTab = """ target="_blank\""""
+    html = f"""<a href="{line["src"]}{newTab}">"""
+    for item in line:
+        toAppend = getType(item, "link")
+        if toAppend:
+            html += parseTypes[toAppend["key"]](item)
+    html += "</a>"
+    return html
+
 def parseList(line):
     li = line["list"]
     try:
@@ -163,40 +171,145 @@ parseTypes = {
     "img": parseImg,
     "specials": parseSpecials,
     "hr": parseHR,
-    "scrollpoint": parseScrollpoint
+    "scrollpoint": parseScrollpoint,
+    "list": parseList
 }
 
-lineNum = 0
-for line in data:
-    print(line)
-    lineData = getType(line, "body")
-    if lineData:
-        if lineData["special"]:
-            body += f"{parseSpecials(line)}\n"
-        else:
-            HTMLine = parseTypes[lineData["key"]](line)
-            if HTMLine:
-                if HTMLine["place"] == "head":
-                    head += f"{HTMLine['content']}\n"
-                elif HTMLine["place"] == "body":
-                    body += f"{HTMLine['content']}\n"
-    lineNum += 1
+def compile(data):
+    try:
+        assert (type(data) == list)
+    except:
+        raise Exception(f"parseInput requires a list. You gave it {type(data)}.")
+    head = ""
+    body = ""
+    global totalScrollpoints
+    totalScrollpoints = 0
+    for line in data:
+        lineData = getType(line, "body")
+        if lineData:
+            if lineData["special"]:
+                body += f"{parseSpecials(line)}\n"
+            else:
+                HTMLine = parseTypes[lineData["key"]](line)
+                if HTMLine:
+                    if HTMLine["place"] == "head":
+                        head += f"{HTMLine['content']}\n"
+                    elif HTMLine["place"] == "body":
+                        body += f"{HTMLine['content']}\n"
 
-if totalScrollpoints > 0:
-    script = "<script>" + open("controller.js", "r").read().replace("maxStage", str(totalScrollpoints)) + "</script>"
-else:
-    script = ""
+    if totalScrollpoints > 0:
+        script = "<script>" + """[
+    {"pageTitle": "Test!"}, 
+    "scrollpoint",
+    {"parallax": {
+        "url": "https://james.chaosgb.co.uk/logo.png",
+        "heading": "Test"
+    }},
+    "scrollpoint",
+    {"content": [
+        {"title": "About test"},
+        "hr",
+        {"text": "This is some text talking about test"},
+        {"text": "As you can see it goes over multiple lines"},
+        {"text": "Here are some interesting things about test"},
+        {"link": {
+            "src": "https://james.chaosgb.co.uk",
+            "newTab": true,
+            "content": [
+                {"img": {
+                    "url": "https://james.chaosgb.co.uk/logo.png",
+                    "width": 500,
+                    "height": 500
+                }},
+                {"text": "Image"}
+            ]
+        }},
+        "hr",
+        {"list": {
+            "ordered": false,
+            "content": [
+                "Hmmm",
+                "Here's something interesting"
+            ]
+        }},
+        "scrollpoint",
+        "hr",
+        {"img": {
+            "url": "https://james.chaosgb.co.uk/logo.png",
+            "width": 500,
+            "height": 500
+        }}
+    ]}
+]""".replace("maxStage", str(totalScrollpoints)) + "</script>"
+    else:
+        script = ""
 
-html = f"""<html><head>
-{head}
-<style>
-{open("style.css", "r").read()}
-</style>
-{script}
-</head>
-<body>
-{body}
-</body>
-</html>"""
+    css = """body{
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    margin: 0%;
+}
+h1{
+    background-color: black;
+    text-align: center;
+    margin: 0%;
+    color: white;
+}
+.parallax{
+    height: 1024px;
+    background-attachment: fixed;
+    background-repeat: none;
+    background-size: cover;
+    background-position: top;
+}
+.content {
+    margin: 10px;
+}
+.h1{
+    background-color: transparent;
+    text-align: center;
+    margin: 0%;
+    color: black;
+}
+iframe{
+    border: 1px solid black;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    width: 90%;
+    height: 480px;
+}
+a {
+    color: blue;
+    text-decoration: none;
+}
+a:hover {
+    color: orangered;
+}
+hr{
+    width: 75%;
+}
+li{
+    line-height: 50px;
+}
+img{
+    border: 1px solid black;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
+p, li{
+    margin-left: 2%;
+    margin-right: 2%;
+}"""
 
-open("out.html", "w").write(html)
+    return f"""<html><head>
+    {head}
+    <style>
+    {css}
+    </style>
+    {script}
+    </head>
+    <body>
+    {body}
+    </body>
+    </html>"""
