@@ -15,7 +15,8 @@ acceptedKeywords = {
         {"title": "str"},
         {"text": "str"},
         {"list": "list"},
-        {"img": "list"}
+        {"img": "list"},
+        {"link": "dict"}
     ],
     "list": {
         "ordered": "bool",
@@ -29,10 +30,6 @@ acceptedKeywords = {
     "special": [
         "scrollpoint",
         "hr"
-    ],
-    "link": [
-        "img",
-        "text"
     ]
 }
 
@@ -104,15 +101,10 @@ def parseText(line):
 
 def parseLink(line):
     newTab = ""
+    line = line["link"]
     if line["newTab"]:
         newTab = """ target="_blank\""""
-    html = f"""<a href="{line["src"]}{newTab}">"""
-    for item in line:
-        toAppend = getType(item, "link")
-        if toAppend:
-            html += parseTypes[toAppend["key"]](item)
-    html += "</a>"
-    return html
+    return f"""<a href="{line["src"]}{newTab}">{parseContent(line)["content"]}</a>"""
 
 def parseList(line):
     li = line["list"]
@@ -172,7 +164,7 @@ parseTypes = {
     "specials": parseSpecials,
     "hr": parseHR,
     "scrollpoint": parseScrollpoint,
-    "list": parseList
+    "link": parseLink
 }
 
 def compile(data):
@@ -198,49 +190,29 @@ def compile(data):
                         body += f"{HTMLine['content']}\n"
 
     if totalScrollpoints > 0:
-        script = "<script>" + """[
-    {"pageTitle": "Test!"}, 
-    "scrollpoint",
-    {"parallax": {
-        "url": "https://james.chaosgb.co.uk/logo.png",
-        "heading": "Test"
-    }},
-    "scrollpoint",
-    {"content": [
-        {"title": "About test"},
-        "hr",
-        {"text": "This is some text talking about test"},
-        {"text": "As you can see it goes over multiple lines"},
-        {"text": "Here are some interesting things about test"},
-        {"link": {
-            "src": "https://james.chaosgb.co.uk",
-            "newTab": true,
-            "content": [
-                {"img": {
-                    "url": "https://james.chaosgb.co.uk/logo.png",
-                    "width": 500,
-                    "height": 500
-                }},
-                {"text": "Image"}
-            ]
-        }},
-        "hr",
-        {"list": {
-            "ordered": false,
-            "content": [
-                "Hmmm",
-                "Here's something interesting"
-            ]
-        }},
-        "scrollpoint",
-        "hr",
-        {"img": {
-            "url": "https://james.chaosgb.co.uk/logo.png",
-            "width": 500,
-            "height": 500
-        }}
-    ]}
-]""".replace("maxStage", str(totalScrollpoints)) + "</script>"
+        script = "<script>" + """var stage = 0;
+
+function keyPress(e){
+	pressed = false;
+    if (e.key === "n"){
+		stage++;
+		pressed = true;
+	}
+	if (e.key === "p"){
+		stage--;
+		pressed = true;
+	}
+	if (stage<0){
+		stage = 0;
+	}
+	if (stage>maxStage){
+		stage = maxStage;
+	}
+	if (pressed===true){
+		document.getElementById(`scroll${stage}`).scrollIntoView({behavior: "smooth"});
+	}
+}
+document.addEventListener('keydown', keyPress);""".replace("maxStage", str(totalScrollpoints)) + "</script>"
     else:
         script = ""
 

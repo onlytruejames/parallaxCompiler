@@ -1,0 +1,103 @@
+<html><head>
+    <title>Example!</title>
+
+    <style>
+    body{
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    margin: 0%;
+}
+h1{
+    background-color: black;
+    text-align: center;
+    margin: 0%;
+    color: white;
+}
+.parallax{
+    height: 1024px;
+    background-attachment: fixed;
+    background-repeat: none;
+    background-size: cover;
+    background-position: top;
+}
+.content {
+    margin: 10px;
+}
+.h1{
+    background-color: transparent;
+    text-align: center;
+    margin: 0%;
+    color: black;
+}
+iframe{
+    border: 1px solid black;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    width: 90%;
+    height: 480px;
+}
+a {
+    color: blue;
+    text-decoration: none;
+}
+a:hover {
+    color: orangered;
+}
+hr{
+    width: 75%;
+}
+li{
+    line-height: 50px;
+}
+img{
+    border: 1px solid black;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
+p, li{
+    margin-left: 2%;
+    margin-right: 2%;
+}
+    </style>
+    <script>var stage = 0;
+
+function keyPress(e){
+	pressed = false;
+    if (e.key === "n"){
+		stage++;
+		pressed = true;
+	}
+	if (e.key === "p"){
+		stage--;
+		pressed = true;
+	}
+	if (stage<0){
+		stage = 0;
+	}
+	if (stage>3){
+		stage = 3;
+	}
+	if (pressed===true){
+		document.getElementById(`scroll${stage}`).scrollIntoView({behavior: "smooth"});
+	}
+}
+document.addEventListener('keydown', keyPress);</script>
+    </head>
+    <body>
+    <div id="scroll0"></div>
+<div class="parallax" style="background-image: url(https://james.chaosgb.co.uk/media/tellytest.jpeg);"><h1>Example</h1></div>
+<div id="scroll1"></div>
+<h1 class="h1">About Example</h1>
+                <hr><p>This is some text talking about Example</p>
+                <p>As you can see it goes over multiple lines</p>
+                <p>Here are some interesting things about Example</p>
+                <a href="https://james.chaosgb.co.uk target="_blank""><img src="https://james.chaosgb.co.uk/media/tellytest.jpeg" width=500 width=500>
+                <p>This is a link</p>
+                </a>
+                <hr><ul><li>Hmmm</li><li>Here's something interesting</li></ul>
+                <div id="scroll2"></div><hr><img src="https://james.chaosgb.co.uk/media/tellytest.jpeg" width=500 width=500>
+                
+
+    </body>
+    </html>
