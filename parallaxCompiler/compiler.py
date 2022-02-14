@@ -33,6 +33,9 @@ acceptedKeywords = {
     ]
 }
 
+def getKeywords():
+    return acceptedKeywords
+
 def getKeys(keyList):
     returnList = []
     for entry in keyList:
