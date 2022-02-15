@@ -8,7 +8,9 @@ A couple of years ago, I saw a [news story](https://www.bbc.co.uk/news/resources
 
 # Module docs
 
-There is only one function you can use, and that's `compile`. It accepts a list and returns a string. It formats all the **valid** data. If something is incorrect, it *should* ignore it and carry on. If it doesn't, put the error on the issues section. This is how you use it:
+## compile
+
+`compile` accepts a list and returns a string. It formats all the **valid** data. If something is incorrect, it *should* ignore it and carry on. If it doesn't, put the error on the issues section. This is how you use it:
 ```python
 parallaxCompiler.compile([
   {"parallax": {
@@ -19,6 +21,16 @@ parallaxCompiler.compile([
     {"text": "This is an example!"}
   ]}
 ])
+```
+
+---
+
+## getKeywords
+
+`getKeywords` can be useful when you need a list of supported keywords in your version.
+
+```python
+parallaxCompiler.getKeywords()
 ```
 
 ---

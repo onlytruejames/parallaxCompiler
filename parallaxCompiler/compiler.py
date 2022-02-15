@@ -27,6 +27,11 @@ acceptedKeywords = {
         "width": "int",
         "height": "int"
     },
+    "link": {
+        "src": "str",
+        "newTab": "bool",
+        "content": "list"
+    }, 
     "special": [
         "scrollpoint",
         "hr"
