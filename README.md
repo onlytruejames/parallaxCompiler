@@ -35,6 +35,16 @@ parallaxCompiler.getKeywords()
 
 ---
 
+## getStrictKeywords
+
+`getStrictKeywords` can be useful when you need a list of supported keywords in your version *and* what they contain. Good luck trying to use the data it gives you, it's a nightmare...
+
+```python
+parallaxCompiler.getStrictKeywords()
+```
+
+---
+
 # Formatting Docs
 
 ## Format

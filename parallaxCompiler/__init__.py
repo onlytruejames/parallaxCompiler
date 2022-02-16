@@ -1,3 +1,3 @@
 __title__ = "parallaxCompiler"
 
-from .compiler import compile, getKeywords
+from .compiler import compile, getKeywords, getStrictKeywords

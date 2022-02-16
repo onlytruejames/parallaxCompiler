@@ -1,8 +1,8 @@
 from cgi import parse_header
 import json
 
-acceptedKeywords = {
-    "body": [
+strictKeywords = {
+    "main": [
         {"pageTitle": "str"},
         {"content": "list"},
         {"parallax": "list"}
@@ -15,7 +15,7 @@ acceptedKeywords = {
         {"title": "str"},
         {"text": "str"},
         {"list": "list"},
-        {"img": "list"},
+        {"img": "dict"},
         {"link": "dict"}
     ],
     "list": {
@@ -38,8 +38,25 @@ acceptedKeywords = {
     ]
 }
 
+keywords = [
+    "parallax",
+    "content",
+    "pageTitle",
+    "title",
+    "text",
+    "list",
+    "img",
+    "specials",
+    "hr",
+    "scrollpoint",
+    "link"
+]
+
 def getKeywords():
-    return acceptedKeywords
+    return keywords
+
+def getStrictKeywords():
+    return strictKeywords
 
 def getKeys(keyList):
     returnList = []
@@ -50,14 +67,14 @@ def getKeys(keyList):
 def getType(line, callPoint):
     if type(line) == dict:
         key = list(line.keys())[0]
-        if key in getKeys(acceptedKeywords[callPoint]):
+        if key in getKeys(keywords[callPoint]):
             return {
                 "key": key,
                 "special": False,
                 "type": "dict"
             }
     elif type(line) == str:
-        if line in acceptedKeywords["special"]:
+        if line in keywords["special"]:
             return {
                 "special": True
             }
@@ -147,7 +164,7 @@ def parseImg(line):
     return f"""<img src="{line["img"]["url"]}"{width}{height}>"""
 
 def parseSpecials(line):
-    if line in acceptedKeywords["special"]:
+    if line in keywords["special"]:
         return parseTypes[line]()
     else:
         return ""
@@ -185,7 +202,7 @@ def compile(data):
     global totalScrollpoints
     totalScrollpoints = 0
     for line in data:
-        lineData = getType(line, "body")
+        lineData = getType(line, "main")
         if lineData:
             if lineData["special"]:
                 body += f"{parseSpecials(line)}\n"
