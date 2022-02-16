@@ -14,14 +14,15 @@ strictKeywords = {
     "content": [
         {"title": "str"},
         {"text": "str"},
-        {"list": "list"},
+        {"list": "dict"},
         {"img": "dict"},
         {"link": "dict"}
     ],
     "list": {
         "ordered": "bool",
-        "content": "list"
+        "entries": "list"
     },
+    "entries": "str",
     "img": {
         "url": "str",
         "width": "int",
@@ -144,7 +145,7 @@ def parseList(line):
         line = "<ol>"
     else:
         line = "<ul>"
-    for point in li["content"]:
+    for point in li["entries"]:
         line += f"<li>{point}</li>"
     if ordered:
         line += "</ol>"
