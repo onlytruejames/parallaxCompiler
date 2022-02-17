@@ -67,7 +67,6 @@ def getKeys(keyList):
 def getType(line, callPoint):
     if type(line) == dict:
         key = list(line.keys())[0]
-        print(line)
         if key in getKeys(strictKeywords[callPoint]):
             return {
                 "key": key,
