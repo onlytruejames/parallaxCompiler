@@ -22,7 +22,6 @@ strictKeywords = {
         "ordered": "bool",
         "entries": "list"
     },
-    "entries": "str",
     "img": {
         "url": "str",
         "width": "int",
@@ -68,14 +67,15 @@ def getKeys(keyList):
 def getType(line, callPoint):
     if type(line) == dict:
         key = list(line.keys())[0]
-        if key in getKeys(keywords[callPoint]):
+        print(line)
+        if key in getKeys(strictKeywords[callPoint]):
             return {
                 "key": key,
                 "special": False,
                 "type": "dict"
             }
     elif type(line) == str:
-        if line in keywords["special"]:
+        if line in strictKeywords["special"]:
             return {
                 "special": True
             }
@@ -165,7 +165,7 @@ def parseImg(line):
     return f"""<img src="{line["img"]["url"]}"{width}{height}>"""
 
 def parseSpecials(line):
-    if line in keywords["special"]:
+    if line in strictKeywords["special"]:
         return parseTypes[line]()
     else:
         return ""

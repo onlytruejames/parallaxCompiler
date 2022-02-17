@@ -27,7 +27,7 @@
         "hr",
         {"list": {
             "ordered": false,
-            "content": [
+            "entries": [
                 "Hmmm",
                 "Here's something interesting"
             ]
