@@ -153,13 +153,19 @@ def parseList(line):
     return line
 
 def parseImg(line):
-    if line["img"]["width"]:
-        width = f" width={line['img']['width']}"
-    else:
+    try:
+        if line["img"]["width"]:
+            width = f" width={line['img']['width']}"
+        else:
+            width = ""
+    except:
         width = ""
-    if line["img"]["height"]:
-        height = f" width={line['img']['height']}"
-    else:
+    try:
+        if line["img"]["height"]:
+            height = f" height={line['img']['height']}"
+        else:
+            height = ""
+    except:
         height = ""
     return f"""<img src="{line["img"]["url"]}"{width}{height}>"""
 
