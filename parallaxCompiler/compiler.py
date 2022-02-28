@@ -84,16 +84,20 @@ def getType(line, callPoint):
 def parseParallax(line):
     line = line["parallax"]
     html = ""
-    if line["url"]:
+    try:
         if line["heading"]:
-            html = f'<div class="parallax" style="background-image: url({line["url"]});"><h1>{line["heading"]}</h1></div>'
-        else:
-            html =  f'<div class="parallax" style="background-image: url({line["url"]});"></div>'
+            heading = f"<h1>{line['heading']}</h1>"
+    except:
+        heading = ""
+    try:
+        if line["url"]:
+            html = f'<div class="parallax" style="background-image: url({line["url"]});">{heading}</div>'
         return {
             "place": "body",
             "content": html
         }
-    return False
+    except:
+        return False
 
 def parsePageTitle(line):
     return {
