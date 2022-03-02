@@ -39,17 +39,14 @@ strictKeywords = {
 }
 
 keywords = [
-    "parallax",
-    "content",
-    "pageTitle",
-    "title",
-    "text",
-    "list",
-    "img",
-    "specials",
-    "hr",
-    "scrollpoint",
-    "link"
+    {"parallax": "dict"},
+    {"content": "list"},
+    {"pageTitle": "str"},
+    {"title": "str"},
+    {"text": "str"},
+    {"list": "dict"},
+    {"img": "dict"},
+    {"link": ""}
 ]
 
 def getKeywords():
@@ -57,6 +54,9 @@ def getKeywords():
 
 def getStrictKeywords():
     return strictKeywords
+
+def getSpecials():
+    return strictKeywords["special"]
 
 def getKeys(keyList):
     returnList = []
