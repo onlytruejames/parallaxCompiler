@@ -46,7 +46,7 @@ keywords = [
     {"text": "str"},
     {"list": "dict"},
     {"img": "dict"},
-    {"link": ""}
+    {"link": "dict"}
 ]
 
 def getKeywords():
