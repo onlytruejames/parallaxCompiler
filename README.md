@@ -27,10 +27,20 @@ parallaxCompiler.compile([
 
 ## getKeywords
 
-`getKeywords` can be useful when you need a list of supported keywords in your version.
+`getKeywords` can be useful when you need a list of supported keywords in your version. It does *not* include special tags.
 
 ```python
 parallaxCompiler.getKeywords()
+```
+
+---
+
+## getSpecials
+
+`getSpecials` can be useful when you need a list of special tags.
+
+```python
+parallaxCompiler.getSpecials()
 ```
 
 ---
