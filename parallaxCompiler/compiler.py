@@ -34,7 +34,9 @@ strictKeywords = {
     }, 
     "special": [
         "scrollpoint",
-        "hr"
+        "hr",
+        "trigger",
+        "script"
     ]
 }
 
@@ -73,11 +75,14 @@ def getType(line, callPoint):
                 "special": False,
                 "type": "dict"
             }
-    elif type(line) == str:
-        if line in strictKeywords["special"]:
-            return {
-                "special": True
-            }
+    if line in strictKeywords["special"]:
+        return {
+            "special": True
+        }
+    if list(line.keys())[0] in strictKeywords["special"]:
+        return {
+            "special": True
+        }
     print(f"There's an illegal string type on the line that looks like\n{line}")
     return False
 
@@ -174,10 +179,24 @@ def parseImg(line):
     return f"""<img src="{line["img"]["url"]}"{width}{height}>"""
 
 def parseSpecials(line):
+    print(list(line.keys())[0])
     if line in strictKeywords["special"]:
         return parseTypes[line]()
+    elif list(line.keys())[0] in strictKeywords["special"]:
+        return parseTypes[list(line.keys())[0]](line)
     else:
         return ""
+
+def parseTrigger(line):
+    global totalScrollpoints
+    html = f"""<div id="scroll{totalScrollpoints}" trigger="{line["trigger"]}"></div>"""
+    totalScrollpoints += 1
+    return html
+
+def parseScript(line):
+    return f"""<script>
+    {line["script"]}
+</script"""
 
 def parseHR():
     return "<hr>"
@@ -198,8 +217,10 @@ parseTypes = {
     "img": parseImg,
     "specials": parseSpecials,
     "hr": parseHR,
+    "trigger": parseTrigger,
     "scrollpoint": parseScrollpoint,
-    "link": parseLink
+    "link": parseLink,
+    "script": parseScript
 }
 
 def compile(data):
@@ -226,6 +247,7 @@ def compile(data):
 
     if totalScrollpoints > 0:
         script = "<script>" + """var stage = 0;
+        var prEval = false;
 
 function keyPress(e){
 	pressed = false;
@@ -244,7 +266,26 @@ function keyPress(e){
 		stage = maxStage;
 	}
 	if (pressed===true){
-		document.getElementById(`scroll${stage}`).scrollIntoView({behavior: "smooth"});
+        var elem = document.getElementById(`scroll${stage}`)
+        elem.scrollIntoView({behavior: "smooth"});
+        if (prEval){
+            eval(`${prEval}(false${prEndBits})`)
+            prEval = false;
+        }
+        if (elem.getAttribute("trigger")){
+            trig = elem.getAttribute("trigger");
+            if (trig.endsWith(")") && !trig.endsWith("()")){
+                endBits = trig.split("(")
+                endBits = endBits[endBits.length - 1].split(")")
+                endBits = `, ${endBits[endBits.length - 2]}`
+            }
+            else{
+                endBits = ""
+            }
+            eval(`${trig}(true${endBits});`);
+            prEval = elem.getAttribute("trigger");
+            prEndBits = endBits;
+        }
 	}
 }
 document.addEventListener('keydown', keyPress);""".replace("maxStage", str(totalScrollpoints)) + "</script>"
@@ -319,4 +360,4 @@ p, li{
     <body>
     {body}
     </body>
-    </html>"""
+    </html>""".replace("\n    ", "").replace("\n", "")

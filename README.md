@@ -2,7 +2,8 @@
 
 A way to make cool presentations with JSON
 
-A couple of years ago, I saw a [news story](https://www.bbc.co.uk/news/resources/idt-sh/who_stole_burmas_royal_ruby) on the BBC. One of their long reads. You scrolled down and cool things happened in the background. A few months later, I made one myself for school, and I've made a few more since then. I wrote this compiler so I could make them quicker, and I'm happy with the result. It needs improving, but it works. It also allows scrolling by button pressing (n for next and p for previous, support *will* be added for customisation soon).
+A couple of years ago, I saw a [news story](https://www.bbc.co.uk/news/resources/idt-sh/who_stole_burmas_royal_ruby) on the BBC, and I thought it was a pretty cool type of presentation. A few months later, I made one myself for school, and I've made a few more since then. I wrote this compiler so I could make them quicker, and I'm happy with the result. It needs improving, but it works. It also allows scrolling by button pressing (n for next and p for previous, support *should* be added for customisation soon).
+This documentation provides reference for calling the compiler, reference for the syntax so it can compile, and reference for what each keyword compiles to, so the document can be easily modified.
 
 ---
 
@@ -82,17 +83,22 @@ Main is the JSON list you start with. In here, there can be three tags:
 ]
 ```
 
+On it's own, the list will pass:
+
+```html
+"<html><head><style>body{font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;margin: 0%;}h1{background-color: black;text-align: center;margin: 0%;color: white;}.parallax{height: 1024px;background-attachment: fixed;background-repeat: none;background-size: cover;background-position: top;}.content {margin: 10px;}.h1{background-color: transparent;text-align: center;margin: 0%;color: black;}iframe{border: 1px solid black;margin-left: auto;margin-right: auto;display: block;width: 90%;height: 480px;}a {color: blue;text-decoration: none;}a:hover {color: orangered;}hr{width: 75%;}li{line-height: 50px;}img{border: 1px solid black;margin-left: auto;margin-right: auto;display: block;}p, li{margin-left: 2%;margin-right: 2%;}</style></head><body></body></html>```
+
 ---
 
 ## pageTitle
 
-pageTitle accepts a string. It corresponds to `<title>`.
+pageTitle accepts a string. It corresponds to `<title>` and is added into `<head>`.
 
 ---
 
 ## content
 
-content is where your content goes. It accepts a list of tags. These are:
+content is where your content goes, and it corresponds to `<div class="content">`. It accepts a list of tags. These are:
 ```json
 [
   {"title": ""},
@@ -101,11 +107,12 @@ content is where your content goes. It accepts a list of tags. These are:
   {"img": {}}
 ]
 ```
+
 ---
 
 ### title
 
-`title` accepts a string. It corresponds to `<h1>`.
+`title` is a dictionary which accepts a string. It corresponds to `<h1 class="h1"></h1>`.
 
 ---
 
@@ -128,13 +135,13 @@ content is where your content goes. It accepts a list of tags. These are:
 
 `ordered` accepts a boolean, but it is not mandatory. It determines whether the list is ordered or unordered. By default it is unordered.
 
-`content` accepts a list. In turn, the list accepts strings. Each item corresponds to `<li>`.
+`entries` accepts a list. In turn, the list accepts strings. Each item corresponds to `<li>`.
 
 ---
 
 ### img
 
-`img` accepts a dictionary. It corresponds to `<img>`. The dictionary should be like this:
+`img` accepts a dictionary. It corresponds to `<img src="" width="" height="">`. The dictionary should be like this:
 
 ```json
 {
@@ -154,7 +161,7 @@ content is where your content goes. It accepts a list of tags. These are:
 
 ### link
 
-`link` defines a link. It is formatted like this:
+`link` defines a link. It corresponds to `<a href="" target=""><div class="content"></div</a>`. It is formatted like this:
 ```json
 {"link": {
   "src": "https://james.chaosgb.co.uk",
@@ -164,13 +171,13 @@ content is where your content goes. It accepts a list of tags. These are:
   ]
 }}
 ```
-Anything that can go in `content` can go in here. I see a lot of potential for this to go wrong, such as parallaxes being links, but 
+The `content` parameter is the same as `content` from earlier on. 
 
 ---
 
 ## parallax
 
-`parallax` defines a parallax transition. It accepts a dictionary. The dictionary should look like this:
+`parallax` defines a parallax transition, corresponding to `<div class="parallax" style="background-image: url({url});">{heading}</div>`. It accepts a dictionary. The dictionary should look like this:
 
 ```json
 {
@@ -187,13 +194,7 @@ Anything that can go in `content` can go in here. I see a lot of potential for t
 
 ## Special tags
 
-Special tags are made up of strings and can be used in nearly every context. There are currently 2 special tags: `scrollpoint` and `hr`. This is how you use them:
-
-```json
-[
-  "special"
-]
-```
+Special tags are made can be used in nearly every context. There are currently 4 special tags. They are currently the only ones that can be just strings.
 
 ---
 
@@ -201,8 +202,32 @@ Special tags are made up of strings and can be used in nearly every context. The
 
 `scrollpoint` tells the button-activated scrolling that it can scroll to this point in the page.
 
+```json
+[
+  "scrollpoint"
+]
+```
+
+---
+
+### trigger
+
+`trigger` does the same as `scrollpoint` but it's a dictionary and triggers a preset function when scrolled to. It accepts a function with or without brackets at the end. The function will always be called with a boolean first parameter. If you need any other parameters, just put them in brackets at the end. Examples below.
+
+```json
+[
+  {"trigger": "run"}, //calls run(true) when scrolled to and run(false) when scrolled from
+  {"trigger": "run()"}, //calls run(true) when scrolled to and run(false) when scrolled from
+  {"trigger": "run(1, 'string')"} //calls run(true, 1, 'string') when scrolled to and run(false, 1, 'string') when scrolled from
+]
+```
+
 ---
 
 ### hr
 
 `hr` adds a horizontal line to the page. It corresponds to `<hr>`.
+
+### script
+
+`script` is used for Javascript. It corresponds to `<script>`.
