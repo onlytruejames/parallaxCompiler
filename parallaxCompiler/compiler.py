@@ -36,7 +36,8 @@ strictKeywords = {
         "scrollpoint",
         "hr",
         "trigger",
-        "script"
+        "script",
+        "style"
     ]
 }
 
@@ -179,7 +180,6 @@ def parseImg(line):
     return f"""<img src="{line["img"]["url"]}"{width}{height}>"""
 
 def parseSpecials(line):
-    print(list(line.keys())[0])
     if line in strictKeywords["special"]:
         return parseTypes[line]()
     elif list(line.keys())[0] in strictKeywords["special"]:
@@ -194,9 +194,10 @@ def parseTrigger(line):
     return html
 
 def parseScript(line):
-    return f"""<script>
-    {line["script"]}
-</script"""
+    return f"""<script>{line["script"]}</script>"""
+
+def parseStyle(line):
+    return f"""<style>{line["style"]}</style>"""
 
 def parseHR():
     return "<hr>"
@@ -220,7 +221,8 @@ parseTypes = {
     "trigger": parseTrigger,
     "scrollpoint": parseScrollpoint,
     "link": parseLink,
-    "script": parseScript
+    "script": parseScript,
+    "style": parseStyle
 }
 
 def compile(data):
@@ -246,7 +248,12 @@ def compile(data):
                         body += f"{HTMLine['content']}\n"
 
     if totalScrollpoints > 0:
-        script = "<script>" + """var stage = 0;
+        script = "<script>" + """
+        console.log("This site was built with the Parallax Compiler by James Young");
+        console.log("https://github.com/onlytruejames/parallaxCompiler");
+        console.log("https://james.chaosgb.co.uk");
+        
+        var stage = 0;
         var prEval = false;
 
 function keyPress(e){
@@ -266,21 +273,21 @@ function keyPress(e){
 		stage = maxStage;
 	}
 	if (pressed===true){
-        var elem = document.getElementById(`scroll${stage}`)
+        var elem = document.getElementById(`scroll${stage}`);
         elem.scrollIntoView({behavior: "smooth"});
         if (prEval){
-            eval(`${prEval}(false${prEndBits})`)
+            eval(`${prEval}(false${prEndBits})`);
             prEval = false;
         }
         if (elem.getAttribute("trigger")){
             trig = elem.getAttribute("trigger");
             if (trig.endsWith(")") && !trig.endsWith("()")){
-                endBits = trig.split("(")
-                endBits = endBits[endBits.length - 1].split(")")
-                endBits = `, ${endBits[endBits.length - 2]}`
+                endBits = trig.split("(");
+                endBits = endBits[endBits.length - 1].split(")");
+                endBits = `, ${endBits[endBits.length - 2]}`;
             }
             else{
-                endBits = ""
+                endBits = "";
             }
             eval(`${trig}(true${endBits});`);
             prEval = elem.getAttribute("trigger");

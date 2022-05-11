@@ -231,3 +231,7 @@ Special tags are made can be used in nearly every context. There are currently 4
 ### script
 
 `script` is used for Javascript. It corresponds to `<script>`.
+
+### style
+
+`style` is used for CSS. It corresponds to `<style>`
